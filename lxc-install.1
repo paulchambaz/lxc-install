@@ -1,0 +1,89 @@
+.TH lxc-install 1 lxc-install
+.SH NAME
+lxc-install - installs a linux container from a lxc package
+.SH SYNOPSIS
+.B lxc-install
+[-l logfile] [-c configfile] [--key value...] path/to/package
+
+.B lxc-install
+[-l logfile] [-c configfile] [--key value...] http(s)://package_repo
+
+.B lxc-install
+[-l logfile] [-c configfile] [--key value...] git@package_repo
+
+.B lxc-install
+[-l logfile] [-c configfile] [--key value...] official_package
+.SH DESCRIPTION
+.B lxc-install
+installs a linux container from a lxc package.
+A lxc package is a directory containing a config.toml, a playbook.yaml and other optional files.
+It is used to easily deploy and community validate IaaC in linux container. That being said, anyone can use this project and install their own linux containers much easier without having to rewrite ansible playbooks.
+.P
+.B lxc-install
+can install lxc package from host or remote machine, and install playbook from the official package website : https://lxc-hub.xyz.
+.SH OPTIONS
+These options can be used for lxc-install
+.TP
+.B path
+The path must be the very last argument passed to lxc-install. It can take four form: path/to/package is a host path, http(s)://package_repo is the url to a online git repo, the repo will be cloned, git@package_repo is the ssh address to a online git repo, the repo will be cloned, finally official_package is the name of a lxc package present on lxc-hub, it contains a link to a git repository that will be cloned
+.TP
+.B -c config.toml
+Add a configuration file to overwrite the default one. This configuration file can have any of the arguments of the original configuration files (and more though they will not be used)
+.TP
+.B -l file.log
+Add a log file for the result of the ansible playbook. This is useful to transmit information about the configuration of the linux container like database name and passwords arbitrarly set at runtime
+.TP
+.B --key value
+You can add any other arguments from the command line to lxc-install, these arguments will take precedent over their key defined in config.toml. As such you can pass --name ngixn2 or --password $(openssl rand -base64 32) to differentiate linux containers and harden them when creating them
+.SH MORE INFORMATION
+.B lxc package
+.P
+As said earlier a lxc package is just a directory containing at least two key files : config.toml and playbook.yaml.
+.P
+.B config.toml
+.P
+This file specifies the configuration of the container, it must include the following field:
+.IP
+name - the name that the linux container will have
+.IP
+password - the password for the root account of the linux container
+.IP
+version - the version of the linux container - used to keep track of needed update for teh linux containers
+.IP
+distribution - the distribution used for the linux container - see lxc for list of usable distribution
+.IP
+release - the release of the distribution for the linux container - see lxc for list of usable release
+.IP
+architecture - the architecture of the distribution for the linux container - see lxc for the list of usable architecture
+.IP
+mountpoint - location mounted to /mnt by default on the linux container - allows for data passthrough to the linux container
+.IP
+options - you can then enter a list of optional values, these values will be passed to the ansible playbook when running it, this is useful for specifying version, password, names that would be different for different containers. Please note that this is where you should declare your ansible variables
+.P
+.B playbook.yaml
+.P
+This file contains the logic for deploying your linux container. It is an ansible playbook, so you can easily deploy your existing infrastructure to lxc-container.
+.IP
+In general this playbook should achieve the following objective : having a working reachable container for a given service.
+.IP
+Every container starts fully updated and with two packages python3 and openssh-server. Password connection are enabled in sshd.
+So if you want to harden your container, you should start here.
+.IP
+Ansible variables are not to be declared inside the playbook, as they won't be able to be overwritten by the inventory file, and this is the method used to pass ansible variables in lxc-install. Instead, if you want to declare a static ansible variable, you should declare it in the config.toml as explained above.
+.P
+.B files
+.P
+You can add other files, and the general convention is to place them under the files directory of your lxc package.
+You can add an arbitrary number of files in the files directory and use them with the ansible playbook.
+.P
+.B Publishing a lxc package
+.P
+Even though you are totally free to publish what you want, here is a list of recommendation to have before publishing a linux container.
+First, make sure the container works, that is of course the most important one, make sure that for every update you push, you can run lxc-install your_package and have a running reachable linux container.
+Second, make sure to follow the convention outlined in this document, this is designed to ease sharing of lxc packages.
+.SH AUTHORS
+Written by Paul Chambaz <paul@chambaz.xyz> (c) 2022
+.SH LICENSE
+This project is licensed under the GPLv3
+.SH SEE ALSO
+lxc(7), lxc-create(1), lxc-copy(1), lxc-destroy(1), lxc-stop(1), lxc-execute(1), lxc-console(1), lxc-monitor(1), lxc-wait(1), lxc-cgroup(1), lxc-ls(1), lxc-info(1), lxc-freeze(1), lxc-unfreeze(1), lxc-attach(1), lxc.conf(5)

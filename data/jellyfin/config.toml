@@ -1,0 +1,10 @@
+name="jellyfin"
+password="jellyfin"
+version="1.0.0"
+distribution="alpine"
+release="edge"
+architecture="amd64"
+mountpoint="/mnt/data/jellyfin"
+
+[options]
+jellyfin_version="10.8.6"
