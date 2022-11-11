@@ -52,17 +52,12 @@ func main() {
 
   arguments := get_args(os.Args[1:])
 
-  log("arguments parsed")
-
   var optional_config optional_config
   if arguments.config_path != "" {
     optional_config = get_optional_config(arguments.config_path)
-    log("optional config read")
   }
 
   config := get_config(arguments.main_path + "/config.toml")
-
-  log("config read")
 
   config = overwrite_config(config, optional_config.keys, optional_config.values)
   config = overwrite_config(config, arguments.keys, arguments.values)
