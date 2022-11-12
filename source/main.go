@@ -46,11 +46,15 @@ type toml struct {
 }
 
 func main() {
+  var err error
+
   if runtime.GOOS != "linux" {
     die("this program only works on linux")
   }
 
-  ssh_key := exec_command("cat", "~/.ssh/id_rsa.pub")
+  homedir, err := os.UserHomeDir()
+  check(err, "could not read home directory")
+  ssh_key := exec_command("cat", homedir + "/.ssh/id_rsa.pub")
   fmt.Println(ssh_key)
 
   arguments := get_args(os.Args[1:])
@@ -67,7 +71,6 @@ func main() {
 
   log("final config is set")
 
-  var err error
   err = os.MkdirAll(config.mountpoint, os.ModePerm)
   check(err, "could not create + '" + config.mountpoint + "'")
 
