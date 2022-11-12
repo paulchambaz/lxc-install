@@ -129,7 +129,7 @@ func main() {
 
   // lxc_exec_command(config.name, "yes " + config.password + " | passwd")
   // lxc_exec_command(config.name, "sed -i 's/^#\\?\\s*PermitRootLogin .*$/PermitRootLogin yes/' /etc/ssh/sshd_config")
-  lxc_exec_command(config.name, "echo \"echo \\\"" + ssh_key + "\" > $HOME/.ssh/authorized_keys\"")
+  lxc_exec_command(config.name, "echo \"echo \\\"" + ssh_key + "\" > ~/.ssh/authorized_keys\"")
   lxc_exec_command(config.name, "rc-update add sshd")
   lxc_exec_command(config.name, "/etc/init.d/sshd start")
 
