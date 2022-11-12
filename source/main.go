@@ -514,6 +514,7 @@ func get_args(args []string) arguments {
     exec_command("git", "clone", path, "/tmp/lxc-install")
     arguments.main_path = "/tmp/lxc-install"
     arguments.is_git = true
+    log("git repo cloned")
   } else {
     arguments.main_path = path
     arguments.is_git = false
