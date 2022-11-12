@@ -124,8 +124,9 @@ func main() {
 
   log("container fully upgraded")
 
-  lxc_exec_command(config.name, "yes " + config.password + " | passwd")
-  lxc_exec_command(config.name, "sed -i 's/^#\\?\\s*PermitRootLogin .*$/PermitRootLogin yes/' /etc/ssh/sshd_config")
+  // lxc_exec_command(config.name, "yes " + config.password + " | passwd")
+  // lxc_exec_command(config.name, "sed -i 's/^#\\?\\s*PermitRootLogin .*$/PermitRootLogin yes/' /etc/ssh/sshd_config")
+  lxc_exec_command(config.name, "echo \"echo \\\"$(cat .ssh/id_rsa.pub)\\\" > $HOME/.ssh/authorized_keys\"")
   lxc_exec_command(config.name, "rc-update add sshd")
   lxc_exec_command(config.name, "/etc/init.d/sshd start")
 
@@ -177,6 +178,9 @@ func main() {
   if arguments.is_git {
     os.Remove(arguments.main_path)
   }
+
+  // lxc_exec_command(config.name, "sed -i 's/^#\\?\\s*PermitRootLogin .*$/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config")
+  lxc_exec_command(config.name, "/etc/init.d/sshd start")
 
   log(config.name + " linux container is installed")
 }
