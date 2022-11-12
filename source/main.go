@@ -55,7 +55,6 @@ func main() {
   homedir, err := os.UserHomeDir()
   check(err, "could not read home directory")
   ssh_key := exec_command("cat", homedir + "/.ssh/id_rsa.pub")
-  fmt.Println(ssh_key)
 
   arguments := get_args(os.Args[1:])
 
