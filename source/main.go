@@ -50,7 +50,7 @@ func main() {
     die("this program only works on linux")
   }
 
-  ssh_key := exec_command("cat", "$HOME/.ssh/id_rsa.pub")
+  ssh_key := exec_command("cat", "~/.ssh/id_rsa.pub")
   fmt.Println(ssh_key)
 
   arguments := get_args(os.Args[1:])
@@ -129,7 +129,7 @@ func main() {
 
   // lxc_exec_command(config.name, "yes " + config.password + " | passwd")
   // lxc_exec_command(config.name, "sed -i 's/^#\\?\\s*PermitRootLogin .*$/PermitRootLogin yes/' /etc/ssh/sshd_config")
-  lxc_exec_command(config.name, "echo \"echo \\\"" + ssh_key + "\" > ~/.ssh/authorized_keys\"")
+  lxc_exec_command(config.name, "echo \"echo \\\"" + ssh_key + "\" > $HOME/.ssh/authorized_keys\"")
   lxc_exec_command(config.name, "rc-update add sshd")
   lxc_exec_command(config.name, "/etc/init.d/sshd start")
 
