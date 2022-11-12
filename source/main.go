@@ -132,7 +132,8 @@ func main() {
 
   // lxc_exec_command(config.name, "yes " + config.password + " | passwd")
   // lxc_exec_command(config.name, "sed -i 's/^#\\?\\s*PermitRootLogin .*$/PermitRootLogin yes/' /etc/ssh/sshd_config")
-  lxc_exec_command(config.name, "echo \"echo \\\"" + ssh_key + "\\\" > $HOME/.ssh/authorized_keys\"")
+  lxc_exec_command(config.name, "mkdir ~.ssh")
+  lxc_exec_command(config.name, "echo \"echo \\\"" + ssh_key + "\\\" > ~/.ssh/authorized_keys\"")
   lxc_exec_command(config.name, "rc-update add sshd")
   lxc_exec_command(config.name, "/etc/init.d/sshd start")
 
@@ -144,7 +145,7 @@ func main() {
   "[all:vars]\n" +
   "ansible_connection=ssh\n" +
   "ansible_user=root\n" +
-  "ansible_ssh_pass=" + config.password + "\n" +
+  // "ansible_ssh_pass=" + config.password + "\n" +
   "ansible_ssh_common_args=\"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\"\n" +
   "ansible_python_interpreter=/usr/bin/python3\n"
 
