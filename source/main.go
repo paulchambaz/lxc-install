@@ -76,9 +76,29 @@ func main() {
   log("mountpoint created at " + config.mountpoint)
 
   switch config.distribution {
+  case "almalinux":
   case "alpine":
+  case "alt":
+  case "amazonlinux":
+  case "apertis":
+  case "archlinux":
+  case "busybox":
+  case "centos":
   case "debian":
+  case "devuan":
+  case "fedora":
+  case "funtoo":
+  case "kali":
+  case "mint":
+  case "opensuse":
+  case "openwrt":
+  case "oracle":
+  case "plamo":
+  case "pld":
+  case "rockylinux":
+  case "springdalelinux":
   case "ubuntu":
+  case "voidlinux":
   default:
     die("'" + config.distribution + "' distribution not supported")
   }
@@ -116,25 +136,48 @@ func main() {
   log("network connected")
 
   switch config.distribution {
+  case "almalinux":
   case "alpine":
     lxc_exec_command(config.name, "apk update && apk upgrade")
     lxc_exec_command(config.name, "apk add --no-cache python3 openssh-server")
+    lxc_exec_command(config.name, "rc-update add sshd")
+    lxc_exec_command(config.name, "/etc/init.d/sshd start")
+  case "alt":
+  case "amazonlinux":
+  case "apertis":
+  case "archlinux":
+  case "busybox":
+  case "centos":
   case "debian":
     lxc_exec_command(config.name, "apt update && apt upgrade -y")
     lxc_exec_command(config.name, "apt install -y python3 openssh-server")
+    lxc_exec_command(config.name, "systemctl enable sshd")
+    lxc_exec_command(config.name, "systemctl restart sshd")
+  case "devuan":
+  case "fedora":
+  case "funtoo":
+  case "kali":
+  case "mint":
+  case "opensuse":
+  case "openwrt":
+  case "oracle":
+  case "plamo":
+  case "pld":
+  case "rockylinux":
+  case "springdalelinux":
   case "ubuntu":
     lxc_exec_command(config.name, "apt update && apt upgrade -y")
     lxc_exec_command(config.name, "apt install -y python3 openssh-server")
+    lxc_exec_command(config.name, "systemctl enable sshd")
+    lxc_exec_command(config.name, "systemctl restart sshd")
+  case "voidlinux":
   }
 
   log("container fully upgraded")
 
-  // lxc_exec_command(config.name, "yes " + config.password + " | passwd")
-  // lxc_exec_command(config.name, "sed -i 's/^#\\?\\s*PermitRootLogin .*$/PermitRootLogin yes/' /etc/ssh/sshd_config")
   lxc_exec_command(config.name, "mkdir ~/.ssh")
   lxc_exec_command(config.name, "echo \"" + ssh_key + "\" > ~/.ssh/authorized_keys")
-  lxc_exec_command(config.name, "rc-update add sshd")
-  lxc_exec_command(config.name, "/etc/init.d/sshd start")
+  lxc_exec_command(config.name, "sed -i 's/^#\\?\\s*PermitRootLogin .*$/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config")
 
   log("container sshd configured")
 
@@ -144,7 +187,6 @@ func main() {
   "[all:vars]\n" +
   "ansible_connection=ssh\n" +
   "ansible_user=root\n" +
-  // "ansible_ssh_pass=" + config.password + "\n" +
   "ansible_ssh_common_args=\"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\"\n" +
   "ansible_python_interpreter=/usr/bin/python3\n"
 
@@ -163,7 +205,6 @@ func main() {
   cmd := exec.Command("ansible-playbook", "-i", arguments.main_path + "/inventory.ini", arguments.main_path + "/playbook.yaml")
   var o bytes.Buffer
   cmd.Stdout = &o
-  // cmd.Env = append(cmd.Env, "ANSIBLE_HOST_KEY_CHECKING=false")
   err = cmd.Run()
   if err != nil {
     os.Remove(arguments.main_path + "/inventory.ini")
@@ -185,7 +226,6 @@ func main() {
     os.Remove(arguments.main_path)
   }
 
-  // lxc_exec_command(config.name, "sed -i 's/^#\\?\\s*PermitRootLogin .*$/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config")
   lxc_exec_command(config.name, "/etc/init.d/sshd start")
 
   log(config.name + " linux container is installed")

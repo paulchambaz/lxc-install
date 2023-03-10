@@ -1,18 +1,13 @@
-
-CC = go build
 STRIP = strip
 BIN_DIR = /usr/bin
 MAN_DIR = /usr/share/man/man1
 
 lxc-install: clean
-	@echo "Builiding lxc-install"
-	@${CC} -o lxc-install ../source
+	@go build -o lxc-install ../source
 
-install:
-	@echo "Building lxc-install"
-	@${CC} -o lxc-install ../source
-	@${STRIP} lxc-install
+install: lxc-install
 	@echo "Installing lxc-install"
+	@${STRIP} lxc-install
 	@cp -f lxc-install ${BIN_DIR}/lxc-install
 	@chmod 755 ${BIN_DIR}/lxc-install
 	@mkdir -p ${MAN_DIR}
